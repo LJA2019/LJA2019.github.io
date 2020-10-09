@@ -17,10 +17,23 @@
   <meta name="description" content="小菜鸡的学习记录">
   <meta name="author" content="李江安">
   <meta name="keywords" content="">
-  <title>分类 - 李江安的博客</title>
+  <title>关于 - 李江安的博客</title>
 
   <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
 
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+    
+  
+
+  
 
 
 <!-- 主题依赖的图标库，不要自行修改 -->
@@ -161,86 +174,61 @@
         <div class="py-5" id="board"
           >
           
+            <div class="about-avatar">
+              <img src="/img/avatar.png" srcset="/img/loading.gif"
+                   class="img-fluid" alt="avatar">
+            </div>
+          
           <div class="container">
             <div class="row">
               <div class="col-12 col-md-10 m-auto">
                 
 
-
-
-
-
-
-
-<div class="category-list">
-  
-  
-  
-  
-    
-    
-    <div class="category row">
-      <a
-        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
-        id="heading-ckg1mo2vl0006cwvseg63euzl" role="tab" data-toggle="collapse" href="#collapse-ckg1mo2vl0006cwvseg63euzl"
-        aria-expanded="false"
-      >
-        leetcode
-        <i class="iconfont icon-arrowright"></i>
-      </a>
-      <a href="/categories/leetcode/" class="category-count col-2 col-md-1">
-        <i class="iconfont icon-articles"></i>
-        <span>1</span>
-      </a>
-      <div class="category-collapse">
-        
-          
-  <div id="collapse-ckg1mo2vl0006cwvseg63euzl" class="collapse in " role="tabpanel"
-       aria-labelledby="heading-ckg1mo2vl0006cwvseg63euzl">
-    
-  
-  
-    
-    
-    <div class="category-sub row">
-      <a
-        class="category-subitem collapsed list-group-item category-item-action col-10 col-md-11"
-        id="heading-ckg1mo2vp0009cwvs7goshxei" role="tab" data-toggle="collapse" href="#collapse-ckg1mo2vp0009cwvs7goshxei"
-        aria-expanded="false"
-      >
-        回溯
-        <i class="iconfont icon-arrowright"></i>
-      </a>
-      <a href="/categories/leetcode/%E5%9B%9E%E6%BA%AF/" class="category-count col-2 col-md-1">
-        <i class="iconfont icon-articles"></i>
-        <span>1</span>
-      </a>
-      <div class="category-collapse">
-        
-          
-  <div id="collapse-ckg1mo2vp0009cwvs7goshxei" class="collapse in" role="tabpanel"
-       aria-labelledby="heading-ckg1mo2vp0009cwvs7goshxei">
-    
-    
-    
+<div class="text-center">
+  <div class="about-info">
+    <div class="about-name">myname</div>
+    <div class="about-intro">一句简短的介绍</div>
+    <div class="about-icons">
       
-      
-        <a href="/2020/09/16/leetcode-37-%E8%A7%A3%E6%95%B0%E7%8B%AC/" class="list-group-item list-group-item-action">
-          <span class="category-post">leetcode-37 解数独</span>
+        
+        
+        
+        <a target="_blank" rel="noopener" href="https://github.com" class="
+           hint--bottom hint--rounded"
+           aria-label=GitHub
+        >
+          <i class="iconfont icon-github-fill" aria-hidden="true"></i>
+          
         </a>
       
-    
-  </div>
-
         
-      </div>
-    </div>
-  
-  </div>
-
         
-      </div>
+        
+        <a target="_blank" rel="noopener" href="https://douban.com" class="
+           hint--bottom hint--rounded"
+           aria-label=豆瓣
+        >
+          <i class="iconfont icon-douban-fill" aria-hidden="true"></i>
+          
+        </a>
+      
+        
+        
+        
+        <a href="javascript:;" class="qr-trigger
+           "
+           
+        >
+          <i class="iconfont icon-wechat-fill" aria-hidden="true"></i>
+          
+            <img class="qr-img" src="/img/favicon.png" srcset="/img/loading.gif" alt="qrcode" />
+          
+        </a>
+      
     </div>
+  </div>
+</div>
+<div class="mt-5 markdown-body">
   
 </div>
 
@@ -375,7 +363,7 @@
     var typed = new Typed('#subtitle', {
       strings: [
         '  ',
-        "分类&nbsp;",
+        "关于&nbsp;",
       ],
       cursorChar: "_",
       typeSpeed: 70,
@@ -389,6 +377,21 @@
   </script>
 
 
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
 
 
 
