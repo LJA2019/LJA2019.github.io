@@ -17,7 +17,7 @@
   <meta name="description" content="小菜鸡的学习记录">
   <meta name="author" content="李江安">
   <meta name="keywords" content="">
-  <title>线索二叉树详解 - 李江安的博客</title>
+  <title>二叉树遍历的非递归算法 - 李江安的博客</title>
 
   <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
 
@@ -165,8 +165,8 @@
   
     <span class="post-meta">
       <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2020-10-14 10:40" pubdate>
-        2020年10月14日 上午
+      <time datetime="2020-10-15 22:18" pubdate>
+        2020年10月15日 晚上
       </time>
     </span>
   
@@ -177,7 +177,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      1.5k 字
+      636 字
     </span>
   
 
@@ -187,7 +187,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      18
+      10
        分钟
     </span>
   
@@ -217,132 +217,159 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto" id="post">
             <!-- SEO header -->
-            <h1 style="display: none">线索二叉树详解</h1>
+            <h1 style="display: none">二叉树遍历的非递归算法</h1>
             
             <div class="markdown-body" id="post-body">
-              <h1 id="为什么需要遍历"><a href="#为什么需要遍历" class="headerlink" title="为什么需要遍历"></a>为什么需要遍历</h1><p> <strong>遍历</strong>本质上是将一个复杂的非线性结构转换为线性结构，使每一个结点都有了唯一的前驱和后继（第一个结点无前驱，最后一个结点无后继）。</p>
- <a id="more"></a>
-
-<h1 id="什么是线索二叉树"><a href="#什么是线索二叉树" class="headerlink" title="什么是线索二叉树"></a>什么是线索二叉树</h1><p>对于具有n个结点的二叉树，在二叉链式存储结构中有n+1个空链域，利用这些空链域存放在某种遍历次序下该结点的前驱结点和后继结点，这些指针称为线索，加上线索的二叉树称为线索二叉树。</p>
-<h1 id="线索二叉树的结构"><a href="#线索二叉树的结构" class="headerlink" title="线索二叉树的结构"></a>线索二叉树的结构</h1><p>当结点的左孩子为空，把这个空域的指针改为指向该结点的前驱；当结点的右孩子为空，把这个空域的指针改为指向该结点的后继。显然，需要一个标志位ltag标志该域指向的是左孩子还是前驱，需要一个标志位rtag标志该域指向的是右孩子还是后继。ltag和rtag的作用是区别线索指针和孩子指针。<br><img src="/2020/10/14/%E7%BA%BF%E7%B4%A2%E4%BA%8C%E5%8F%89%E6%A0%91%E8%AF%A6%E8%A7%A3/1.png" srcset="/img/loading.gif" width="70%" height="70%"></p>
-<h1 id="线索二叉树的作用"><a href="#线索二叉树的作用" class="headerlink" title="线索二叉树的作用"></a>线索二叉树的作用</h1><p>对于二叉树的一个结点，查找其左右子女是方便的，其前驱和后继只有在遍历中得到。为了容易找到前驱和后继，有两种方法。一种是在结点结构中增加前向和后向的指针，这种方法增加了存储开销，不可取；更好的方法是利用二叉树的空链域。</p>
-<h1 id="三种线索二叉树及区别"><a href="#三种线索二叉树及区别" class="headerlink" title="三种线索二叉树及区别"></a>三种线索二叉树及区别</h1><h2 id="先序线索二叉树"><a href="#先序线索二叉树" class="headerlink" title="先序线索二叉树"></a>先序线索二叉树</h2><p>在先序线索二叉树中查找结点的后继较容易，而查找结点的前驱要知道其双亲的信息。保存双亲的信息需要使用栈。</p>
-<h2 id="后序线索二叉树"><a href="#后序线索二叉树" class="headerlink" title="后序线索二叉树"></a>后序线索二叉树</h2><p>在后序线索二叉树中查找结点<em>p的前驱：若结点</em>p无左子树，则p-&gt;lchild指向其前驱；否则，若结点<em>p有左子树，当其右子树为空时，其左子树的根（即p-&gt;lrchild）为其后序前驱。当其右子树非空时，其右子树的根（即p-&gt;rchild）为其后序前驱。<br>在后序线索二叉树中查找结点</em>p的后继：若结点<em>p为根，则无后继；若结点</em>p为其双亲的右孩子，则其后继为其双亲；若结点<em>p为其双亲的左孩子，且双亲无右子女，则其后继为其双亲；若结点</em>p为其双亲的左孩子，且双亲有右子女，则结点*p的后继是其双亲的右子树中按后序遍历的第一个结点。所以，求后序线索二叉树中结点的后继要知道其双亲的信息，要使用栈。</p>
-<h2 id="中序线索二叉树"><a href="#中序线索二叉树" class="headerlink" title="中序线索二叉树"></a>中序线索二叉树</h2><p>先序线索二叉树查找结点的前驱，后序线索二叉树查找结点的后继都需要利用到双亲的信息，所以必须用栈保存结点的双亲信息，所以说这两种线索二叉树是不完整的。<br>而中序线索二叉树，查找前驱和后继都不需要使用栈。<br><img src="/2020/10/14/%E7%BA%BF%E7%B4%A2%E4%BA%8C%E5%8F%89%E6%A0%91%E8%AF%A6%E8%A7%A3/2.png" srcset="/img/loading.gif" width="70%" height="70%"></p>
-<h1 id="线索二叉树的优点"><a href="#线索二叉树的优点" class="headerlink" title="线索二叉树的优点"></a>线索二叉树的优点</h1><p>优点：  </p>
-<ol>
-<li>利用线索二叉树进行中序遍历时，不必采用堆栈处理，速度较一般二叉树的遍历速度快，且节约存储空间；</li>
-</ol>
-<p>缺点：</p>
-<ol>
-<li>结点的插入和删除比较麻烦</li>
-</ol>
-<h1 id="线索二叉树的应用"><a href="#线索二叉树的应用" class="headerlink" title="线索二叉树的应用"></a>线索二叉树的应用</h1><p>当路由器使用CIDR，选择下一跳的时候，或者转发分组的时候，通常会用<strong>最长前缀匹配（最佳匹配）</strong>来得到路由表的一行数据，为了更加有效的查找最长前缀匹配，使用了一种层次的数据结构中，通常使用的数据结构为二叉线索。</p>
-<h1 id="中序线索二叉树相关代码"><a href="#中序线索二叉树相关代码" class="headerlink" title="中序线索二叉树相关代码"></a>中序线索二叉树相关代码</h1><pre><code class="hljs C++"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span>
+              <h1 id="先序遍历代码实现"><a href="#先序遍历代码实现" class="headerlink" title="先序遍历代码实现"></a>先序遍历代码实现</h1><pre><code class="hljs C++"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span>
 <span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdlib.h&gt;</span></span>
 
 <span class="hljs-keyword">typedef</span> <span class="hljs-keyword">char</span> ElemType;
-<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">trBTNode</span> &#123;</span>
+<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">BTNode</span>&#123;</span>
     ElemType data;
-    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">trBTNode</span> *<span class="hljs-title">left</span>;</span>
-    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">trBTNode</span> *<span class="hljs-title">right</span>;</span>
-    <span class="hljs-built_in">_Bool</span> ltag, rtag;
-&#125; trBTNode, *trBTree;
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">BTNode</span> *<span class="hljs-title">left</span>;</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">BTNode</span> *<span class="hljs-title">right</span>;</span>
+&#125; BTNode, *BTree;
 
-trBTree pre; <span class="hljs-comment">//用于保存前驱</span>
-
-<span class="hljs-comment">/* 扩展二叉树按前序创建一棵线索二叉树 */</span>
-<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">createInTree</span><span class="hljs-params">(trBTree *t)</span> </span>&#123;
+<span class="hljs-comment">/* 扩展二叉树按前序创建一棵二叉树 */</span>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">preOrderBuildTree</span><span class="hljs-params">(BTree *t)</span> </span>&#123;
     <span class="hljs-keyword">char</span> ch;
     <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%c&quot;</span>, &amp;ch);
     <span class="hljs-keyword">if</span> (ch == <span class="hljs-string">&#x27;#&#x27;</span>)
         *t = <span class="hljs-literal">NULL</span>;
     <span class="hljs-keyword">else</span> &#123;
-        *t = (trBTree)<span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(trBTNode));
+        *t = (BTNode*)<span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(BTNode));
         (*t)-&gt;data = ch;
-        (*t)-&gt;ltag = <span class="hljs-number">0</span>;
-        (*t)-&gt;rtag = <span class="hljs-number">0</span>;
-        createInTree(&amp;((*t)-&gt;left));
-        createInTree(&amp;((*t)-&gt;right));
+        preOrderBuildTree(&amp;((*t)-&gt;left));
+        preOrderBuildTree(&amp;((*t)-&gt;right));
     &#125;
 &#125;
 
-<span class="hljs-comment">/* 线索化 */</span>
-<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">InThreading</span><span class="hljs-params">(trBTree T)</span> </span>&#123;
+<span class="hljs-comment">/* 非递归前序遍历 */</span>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">preOrder</span><span class="hljs-params">(BTree T)</span> </span>&#123;
     <span class="hljs-keyword">if</span> (!T)
         <span class="hljs-keyword">return</span>;
-    InThreading(T-&gt;left);
-    <span class="hljs-keyword">if</span> (T-&gt;left == <span class="hljs-literal">NULL</span>) &#123;
-        T-&gt;ltag = <span class="hljs-number">1</span>;
-        T-&gt;left = pre;
-    &#125; 
-    <span class="hljs-keyword">if</span> (pre-&gt;right == <span class="hljs-literal">NULL</span>) &#123;            <span class="hljs-comment">//最开始的pre是 head， right指向自身</span>
-        pre-&gt;rtag = <span class="hljs-number">1</span>;
-        pre-&gt;right = T;
-    &#125;
-    pre = T;
-    InThreading(T-&gt;right);
-&#125; 
-
-<span class="hljs-comment">/* 构建线索二叉树，增加头结点 */</span>
-<span class="hljs-function">trBTree <span class="hljs-title">createInThread</span><span class="hljs-params">(trBTree T)</span> </span>&#123;
-    trBTree head = (trBTree)<span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(trBTNode));           <span class="hljs-comment">//创建一个 head结点</span>
-    head-&gt;ltag = <span class="hljs-number">0</span>;
-    head-&gt;rtag = <span class="hljs-number">1</span>;
-    head-&gt;right = head;
-    <span class="hljs-keyword">if</span> (!T)
-        head-&gt;left = head;
-    <span class="hljs-keyword">else</span> &#123;
-        head-&gt;left = T;
-        pre = head;
-        InThreading(T);
-        pre-&gt;right = head;          <span class="hljs-comment">//最后一个结点没有后继，它的 right指针 指向  head</span>
-        pre-&gt;rtag = <span class="hljs-number">1</span>;
-        head-&gt;right = pre;          <span class="hljs-comment">//  head  的 right 指向 最后一个 结点</span>
-    &#125;
-    <span class="hljs-keyword">return</span> head;        <span class="hljs-comment">// head的left指向二叉树的根结点，head的right指向中序遍历的最后一个结点</span>
-&#125;
-
-<span class="hljs-comment">/* 遍历线索二叉树，时间复杂度O(n) */</span>
-<span class="hljs-function"><span class="hljs-built_in">_Bool</span> <span class="hljs-title">InOrderTraverseThr</span><span class="hljs-params">(trBTree head)</span> </span>&#123;
-    trBTNode *p = head-&gt;left;   <span class="hljs-comment">//  从树根开始遍历</span>
-    <span class="hljs-keyword">while</span> (p != head) &#123;
-        <span class="hljs-keyword">while</span> (p-&gt;ltag == <span class="hljs-number">0</span>) &#123;
+    BTNode *<span class="hljs-built_in">stack</span>[<span class="hljs-number">100</span>];
+    <span class="hljs-keyword">int</span> top = <span class="hljs-number">-1</span>;
+    BTNode *p = T;
+    <span class="hljs-keyword">while</span> (top != <span class="hljs-number">-1</span> || p) &#123;
+        <span class="hljs-comment">/* 等效代码</span>
+<span class="hljs-comment">        if (p) &#123;</span>
+<span class="hljs-comment">            printf(&quot;%c &quot;, p-data);</span>
+<span class="hljs-comment">            stack[++top] = p;</span>
+<span class="hljs-comment">            p = p-&gt;left</span>
+<span class="hljs-comment">        &#125; else &#123;</span>
+<span class="hljs-comment">            p = stack[top--];</span>
+<span class="hljs-comment">            p = p-&gt;right;</span>
+<span class="hljs-comment">        &#125;</span>
+<span class="hljs-comment">         */</span>
+        <span class="hljs-keyword">while</span> (p) &#123;
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%c &quot;</span>, p-&gt;data);
+            <span class="hljs-built_in">stack</span>[++top] = p;
             p = p-&gt;left;
         &#125;
-        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%c &quot;</span>, p-&gt;data);
-        <span class="hljs-keyword">while</span> (p-&gt;rtag == <span class="hljs-number">1</span> &amp;&amp; p-&gt;right != head) &#123;
+        <span class="hljs-keyword">if</span> (top != <span class="hljs-number">-1</span>) &#123;    <span class="hljs-comment">// 可以不必判断栈空</span>
+            p = <span class="hljs-built_in">stack</span>[top--];
             p = p-&gt;right;
-            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%c &quot;</span>, p-&gt;data);
         &#125;
-        p = p-&gt;right;
     &#125;
-    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
 &#125;
 
-<span class="hljs-comment">/* 寻找结点的前驱 */</span>
-<span class="hljs-function">trBTNode* <span class="hljs-title">InOrderPre</span><span class="hljs-params">(trBTNode *p)</span> </span>&#123;
-    <span class="hljs-keyword">if</span> (p-&gt;ltag == <span class="hljs-number">1</span>)
-        <span class="hljs-keyword">return</span> p-&gt;left;
-    p = p-&gt;left;        <span class="hljs-comment">//  查找左子树最后一个结点</span>
-    <span class="hljs-keyword">while</span> (p-&gt;rtag == <span class="hljs-number">0</span>) &#123;
-        p = p-&gt;right;
+<span class="hljs-comment">/* 另一种方法 */</span>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">preOrder2</span><span class="hljs-params">(BTree T)</span> </span>&#123;
+    <span class="hljs-keyword">if</span> (!T)
+        <span class="hljs-keyword">return</span>;
+    BTNode *<span class="hljs-built_in">stack</span>[<span class="hljs-number">100</span>];
+    <span class="hljs-keyword">int</span> top = <span class="hljs-number">-1</span>;
+    <span class="hljs-built_in">stack</span>[++top] = T;
+    <span class="hljs-keyword">while</span> (top != <span class="hljs-number">-1</span>) &#123;
+        BTNode *p = <span class="hljs-built_in">stack</span>[top--];
+        <span class="hljs-built_in">printf</span> (<span class="hljs-string">&quot;%c &quot;</span>, p-&gt;data);
+        <span class="hljs-keyword">if</span> (p-&gt;right)               <span class="hljs-comment">// 压栈先压右子结点</span>
+            <span class="hljs-built_in">stack</span>[++top] = p-&gt;right;
+        <span class="hljs-keyword">if</span> (p-&gt;left)
+            <span class="hljs-built_in">stack</span>[++top] = p-&gt;left;
     &#125;
-    <span class="hljs-keyword">return</span> p;
-&#125;
+&#125;</code></pre>
 
-<span class="hljs-comment">/* 寻找结点的后继 */</span>
-<span class="hljs-function">trBTNode* <span class="hljs-title">InOrderNext</span><span class="hljs-params">(trBTNode *p)</span> </span>&#123;
-    <span class="hljs-keyword">if</span> (p-&gt;rtag == <span class="hljs-number">1</span>)
-        <span class="hljs-keyword">return</span> p-&gt;right;
-    p = p-&gt;right;
-    <span class="hljs-keyword">while</span> (p-&gt;ltag == <span class="hljs-number">0</span>) &#123;
-        p = p-&gt;left;
+<h1 id="中序遍历代码实现"><a href="#中序遍历代码实现" class="headerlink" title="中序遍历代码实现"></a>中序遍历代码实现</h1><pre><code class="hljs C++"><span class="hljs-comment">/* 非递归中序遍历 */</span>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">inOrder</span><span class="hljs-params">(BTree T)</span> </span>&#123;
+    <span class="hljs-keyword">if</span> (!T)
+        <span class="hljs-keyword">return</span>;
+    BTNode *<span class="hljs-built_in">stack</span>[<span class="hljs-number">100</span>]; <span class="hljs-comment">//用于保存双亲结点</span>
+    <span class="hljs-keyword">int</span> top = <span class="hljs-number">-1</span>;
+    BTNode *p = T;
+    <span class="hljs-keyword">while</span> (top != <span class="hljs-number">-1</span> || p) &#123;
+        <span class="hljs-comment">/* 等效代码</span>
+<span class="hljs-comment">        while (p) &#123;</span>
+<span class="hljs-comment">            stack[++top] = p;</span>
+<span class="hljs-comment">            p = p-&gt;left;</span>
+<span class="hljs-comment">        &#125;</span>
+<span class="hljs-comment">        if (top != -1) &#123;    // 栈非空，其实可以不必判断</span>
+<span class="hljs-comment">            p = stack[top--];</span>
+<span class="hljs-comment">            printf(&quot;%c &quot;, p-&gt;data);</span>
+<span class="hljs-comment">            p = p-&gt;right;</span>
+<span class="hljs-comment">        &#125;</span>
+<span class="hljs-comment">         */</span>
+        <span class="hljs-keyword">if</span> (p) &#123;
+            <span class="hljs-built_in">stack</span>[++top] = p;
+            p = p-&gt;left;
+        &#125; <span class="hljs-keyword">else</span> &#123;
+            p = <span class="hljs-built_in">stack</span>[top--];
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%c &quot;</span>, p-&gt;data);
+            p = p-&gt;right;
+        &#125;
     &#125;
-    <span class="hljs-keyword">return</span> p;
-&#125;
-</code></pre>
+&#125;</code></pre>
 
+<h1 id="后序遍历代码实现"><a href="#后序遍历代码实现" class="headerlink" title="后序遍历代码实现"></a>后序遍历代码实现</h1><p>后序遍历的难点在于：<strong>需要判断上次访问的结点是位于左子树，还是右子树</strong>。若是位于左子树，则需跳过根节点，先进入右子树，再回头访问根节点；若是位于右子树，则直接访问根节点。</p>
+<pre><code class="hljs C++"><span class="hljs-comment">/* 非递归后序遍历 */</span>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">postOrder</span><span class="hljs-params">(BTree T)</span> </span>&#123;
+    <span class="hljs-keyword">if</span> (!T)
+        <span class="hljs-keyword">return</span>;
+    BTNode *<span class="hljs-built_in">stack</span>[<span class="hljs-number">100</span>];
+    <span class="hljs-keyword">int</span> top = <span class="hljs-number">-1</span>;
+    <span class="hljs-built_in">stack</span>[++top] = T;
+    BTNode *cur = T, *pre = <span class="hljs-literal">NULL</span>;
+    <span class="hljs-keyword">while</span> (top != <span class="hljs-number">-1</span>) &#123;
+        <span class="hljs-keyword">while</span> (cur) &#123;
+            cur = cur-&gt;left;
+            <span class="hljs-keyword">if</span> (cur)
+                <span class="hljs-built_in">stack</span>[++top] = cur;
+        &#125;
+        cur = <span class="hljs-built_in">stack</span>[top];
+        <span class="hljs-keyword">if</span> (cur-&gt;right == <span class="hljs-literal">NULL</span> || pre == cur-&gt;right) &#123;
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%c &quot;</span>, cur-&gt;data);
+            --top;
+            pre = cur;
+            cur = <span class="hljs-literal">NULL</span>;
+        &#125; <span class="hljs-keyword">else</span> &#123;
+            <span class="hljs-built_in">stack</span>[++top] = cur-&gt;right;
+            cur = cur-&gt;right;
+        &#125;
+    &#125;
+&#125;</code></pre>
+<h1 id="层序遍历"><a href="#层序遍历" class="headerlink" title="层序遍历"></a>层序遍历</h1><pre><code class="hljs C++"><span class="hljs-comment">/* 层序遍历 */</span>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">leverOrder</span><span class="hljs-params">(BTree T)</span> </span>&#123;
+    <span class="hljs-keyword">if</span> (!T)
+        <span class="hljs-keyword">return</span>;
+    BTNode *<span class="hljs-built_in">queue</span>[<span class="hljs-number">100</span>];
+    <span class="hljs-keyword">int</span> front = <span class="hljs-number">0</span>, rear = <span class="hljs-number">0</span>; <span class="hljs-comment">// front为队首，rear为队尾</span>
+    <span class="hljs-built_in">queue</span>[rear] = T;
+    rear = (rear+<span class="hljs-number">1</span>) % <span class="hljs-number">100</span>;
+    <span class="hljs-keyword">while</span> (rear != front) &#123;
+        BTNode *p = <span class="hljs-built_in">queue</span>[front];
+        front = (front + <span class="hljs-number">1</span>) % <span class="hljs-number">100</span>;
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%c &quot;</span>, p-&gt;data);
+        <span class="hljs-keyword">if</span> (p-&gt;left) &#123;
+            <span class="hljs-built_in">queue</span>[rear] = p-&gt;left;
+            rear = (rear+<span class="hljs-number">1</span>) % <span class="hljs-number">100</span>;
+        &#125;
+        <span class="hljs-keyword">if</span> (p-&gt;right) &#123;
+            <span class="hljs-built_in">queue</span>[rear] = p-&gt;right;
+            rear = (rear+<span class="hljs-number">1</span>) % <span class="hljs-number">100</span>;
+        &#125;
+    &#125;
+&#125;</code></pre>
             </div>
             <hr>
             <div>
@@ -374,9 +401,9 @@ trBTree pre; <span class="hljs-comment">//用于保存前驱</span>
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2020/10/15/%E4%BA%8C%E5%8F%89%E6%A0%91%E9%81%8D%E5%8E%86%E7%9A%84%E9%9D%9E%E9%80%92%E5%BD%92%E7%AE%97%E6%B3%95/">
+                      <a href="/2050/12/31/%E5%8D%9A%E5%AE%A2%E8%AF%B4%E6%98%8E/">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">二叉树遍历的非递归算法</span>
+                        <span class="hidden-mobile">博客说明</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -384,8 +411,8 @@ trBTree pre; <span class="hljs-comment">//用于保存前驱</span>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2020/10/09/%E6%A0%B9%E6%8D%AE%E9%81%8D%E5%8E%86%E5%BA%8F%E5%88%97%E9%87%8D%E5%BB%BA%E4%BA%8C%E5%8F%89%E6%A0%91/">
-                        <span class="hidden-mobile">根据遍历序列重建二叉树</span>
+                      <a href="/2020/10/14/%E7%BA%BF%E7%B4%A2%E4%BA%8C%E5%8F%89%E6%A0%91%E8%AF%A6%E8%A7%A3/">
+                        <span class="hidden-mobile">线索二叉树详解</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -598,7 +625,7 @@ trBTree pre; <span class="hljs-comment">//用于保存前驱</span>
     var typed = new Typed('#subtitle', {
       strings: [
         '  ',
-        "线索二叉树详解&nbsp;",
+        "二叉树遍历的非递归算法&nbsp;",
       ],
       cursorChar: "_",
       typeSpeed: 70,
