@@ -177,7 +177,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      2.3k 字
+      2.8k 字
     </span>
   
 
@@ -187,7 +187,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      31
+      37
        分钟
     </span>
   
@@ -338,7 +338,7 @@ firstin表示入边表头指针，指向该顶点的入边表中第一个结点�
 <div align="center">
 <img src="/2020/10/16/%E5%9B%BE%E7%9A%84%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84/7.png" srcset="/img/loading.gif" width="50%" height="50%">   
 </div>
-tailvex是弧起点再顶点表的下标，headvex是弧终点在顶点表中的下标。headlink是入边表指针域，指向重点相同的下一条边；taillink是出边表指针域，指向起点相同的下一条边。如果是网，还可以增加一个weight域来存储权值。
+tailvex是弧起点在顶点表的下标，headvex是弧终点在顶点表中的下标。headlink是入边表指针域，指向重点相同的下一条边；taillink是出边表指针域，指向起点相同的下一条边。如果是网，还可以增加一个weight域来存储权值。
 
 <pre><code class="hljs C++"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span>
 <span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdlib.h&gt;</span></span>
@@ -459,7 +459,51 @@ tailvex是弧起点再顶点表的下标，headvex是弧终点在顶点表中的
         G-&gt;adjMuList[i].firstedge = G-&gt;adjMuList[j].firstedge = e;
     &#125;
 &#125;</code></pre>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><strong>邻接矩阵</strong>用两个数组来表示图。一个一维数组存储图中顶点信息，一个二维数组（称为邻接矩阵）存储图中的边或弧的信息。但是边稀疏的图，邻接矩阵会浪费很多存储空间。使用<strong>邻接表</strong>解决了这一问题。但是对于有向图，邻接表求一个顶点的入度需要遍历整个表，而逆邻接表求一个顶点的出度需要遍历整个表。对于有向图使用<strong>十字链表</strong>可以解决这一问题。十字链表的顶点表中的结点有两个指针，分别指向该顶点的出边表和入边表。当一个无向图更关心边，需要增加或者删除边的时候，使用邻接表需要找到该边的两个结点进行操作。使用<strong>邻接多重表</strong>可以解决这一问题。邻接多重表的边表进行了改进，每个边结点存了该边依附的两个顶点在顶点表中的下标，而且边结点中有两个指针，分别连接与这两个顶点关联的边结点，因此可以通过这两个指针找到与一个结点关联的所有边。</p>
+
+<h1 id="边集数组（Edgeset-Array）"><a href="#边集数组（Edgeset-Array）" class="headerlink" title="边集数组（Edgeset Array）"></a>边集数组（Edgeset Array）</h1><p>边集数组时利用一维数组存储图中所有边的一种图的表示方法。边集数组由两个一维数组构成，一个是存储顶点的信息，另一个是存储边的信息。边数组每个数据元素由一条边的起点下标（begin），终点下标（end）和权（weight）组成。<br><strong>边集数组适合那些对边依次进行处理的运算，不适合对顶点，或者对特定边的运算。</strong><br>边集数组例子：</p>
+<div align="center">
+<img src="/2020/10/16/%E5%9B%BE%E7%9A%84%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84/9.png" srcset="/img/loading.gif" width="50%" height="50%">   
+</div>
+
+<p><strong>克鲁斯卡尔算法中要应用到边集数组这一数据结构</strong></p>
+<pre><code class="hljs C++"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdlib.h&gt;</span></span>
+
+<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> MAXVEX 100</span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> MAXEDGE 200</span>
+<span class="hljs-keyword">typedef</span> <span class="hljs-keyword">char</span> VertexType;
+<span class="hljs-keyword">typedef</span> <span class="hljs-keyword">int</span> EdgeType;
+
+<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Edges</span> &#123;</span>
+    <span class="hljs-keyword">int</span> begin, end;
+    EdgeType weight;
+&#125; Edges;
+<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Graph</span> &#123;</span>
+    VertexType vexs[MAXVEX];    <span class="hljs-comment">// 顶点数组</span>
+    Edges edges[MAXEDGE];
+    <span class="hljs-keyword">int</span> numVertexes, numEdges;
+&#125; ESAGraph;
+
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">CreateESAGraph</span><span class="hljs-params">(ESAGraph *G)</span> </span>&#123;
+    <span class="hljs-keyword">int</span> i, j, k, w;
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;输入顶点数和边数，用\&quot;,\&quot;分隔\n&quot;</span>);
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d,%d&quot;</span>, &amp;G-&gt;numVertexes, &amp;G-&gt;numEdges);
+
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;输入顶点信息\n&quot;</span>);
+    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; G-&gt;numVertexes; ++i) &#123;
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%c&quot;</span>, &amp;G-&gt;vexs[i]);
+    &#125;
+
+    <span class="hljs-keyword">for</span> (k = <span class="hljs-number">0</span>; k &lt; G-&gt;numEdges; ++k) &#123;
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;请输入边(vi,vj)上的下标i，下标j和权w：\n&quot;</span>);
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d,%d,%d&quot;</span>, &amp;i, &amp;j, &amp;w);
+        G-&gt;edges[k].begin = i;
+        G-&gt;edges[k].end = j;
+        G-&gt;edges[k].weight = w;
+    &#125;
+&#125;</code></pre>
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><strong>邻接矩阵</strong>用两个数组来表示图。一个一维数组存储图中顶点信息，一个二维数组（称为邻接矩阵）存储图中的边或弧的信息。但是边稀疏的图，邻接矩阵会浪费很多存储空间。使用<strong>邻接表</strong>解决了这一问题。但是对于有向图，邻接表求一个顶点的入度需要遍历整个表，而逆邻接表求一个顶点的出度需要遍历整个表。对于有向图使用<strong>十字链表</strong>可以解决这一问题。十字链表的顶点表中的结点有两个指针，分别指向该顶点的出边表和入边表。当一个无向图更关心边，需要增加或者删除边的时候，使用邻接表需要找到该边的两个结点进行操作。使用<strong>邻接多重表</strong>可以解决这一问题。邻接多重表的边表进行了改进，每个边结点存了该边依附的两个顶点在顶点表中的下标，而且边结点中有两个指针，分别连接与这两个顶点关联的边结点，因此可以通过这两个指针找到与一个结点关联的所有边。<br>当只需要对边进行操作，可以使用<strong>边集数组</strong>。边集数组中查找一个顶点的度需要扫描整个边数组，效率低，因此更适合对边依次进行处理的操作，而不适合对顶点相关的操作。边集数组也适合表示稀疏图。</p>
 
             </div>
             <hr>
