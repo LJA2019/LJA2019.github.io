@@ -243,7 +243,7 @@
 <span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> INFINITY 65535  <span class="hljs-comment">// 用65535来代表∞</span></span>
 <span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> &#123;</span>
     VertexType vexes[MAXVEX];    <span class="hljs-comment">// 顶点表</span>
-    EdgeType arc[MAXVEX][MAXVEX];   <span class="hljs-comment">// 邻接矩阵</span>
+    EdgeType arcs[MAXVEX][MAXVEX];   <span class="hljs-comment">// 邻接矩阵</span>
     <span class="hljs-keyword">int</span> numVertexes, numEdges;  <span class="hljs-comment">// 图中当前的顶点数和边数</span>
 &#125;MGraph;
 
@@ -251,16 +251,19 @@
     <span class="hljs-keyword">int</span> i, j, k, w;
     <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;输入顶点数和边数：\n&quot;</span>);
     <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d,%d&quot;</span>, &amp;G-&gt;numVertexes, &amp;G-&gt;numEdges);  <span class="hljs-comment">// 输入图的顶点数和边数</span>
-    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; G-&gt;numVertexes; ++i)    <span class="hljs-comment">// 输入顶点信息，建立顶点表</span>
+    getchar();
+    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; G-&gt;numVertexes; ++i) &#123;   <span class="hljs-comment">// 输入顶点信息，建立顶点表</span>
         <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%c&quot;</span>, &amp;G-&gt;vexes[i]);
+        getchar();
+    &#125;
     <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; G-&gt;numVertexes; ++i)
         <span class="hljs-keyword">for</span> (j = <span class="hljs-number">0</span>; j &lt; G-&gt;numVertexes; ++j)
-            G-&gt;arc[i][j] = INFINITY;    <span class="hljs-comment">// 邻接矩阵初始化</span>
+            G-&gt;arcs[i][j] = INFINITY;    <span class="hljs-comment">// 邻接矩阵初始化</span>
     <span class="hljs-keyword">for</span> (k = <span class="hljs-number">0</span>; k &lt; G-&gt;numEdges; ++k) &#123;   <span class="hljs-comment">// 读入边，建立邻接矩阵</span>
         <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;输入边(vi,vj)上的下标i,下标j和权值w：\n&quot;</span>);
         <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d,%d,%d&quot;</span>, &amp;i, &amp;j, &amp;w);  <span class="hljs-comment">// 输入边(vi,vj)上的权w</span>
-        G-&gt;arc[i][j] = w;
-        G-&gt;arc[j][i] = G-&gt;arc[i][j];    <span class="hljs-comment">// 对于无向图，矩阵对称</span>
+        G-&gt;arcs[i][j] = w;
+        G-&gt;arcs[j][i] = G-&gt;arcs[i][j];    <span class="hljs-comment">// 对于无向图，矩阵对称</span>
     &#125;
 &#125;
 <span class="hljs-comment">//如果边不带权值，则邻接矩阵元素的值初始化为0。</span></code></pre>
@@ -294,7 +297,7 @@
 &#125; EdgeNode;
 <span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">VertexNode</span> &#123;</span>
     VertexType data;
-    EdgeNode *firstvertex;
+    EdgeNode *firstedge;
 &#125; VertexNode, AdjList[MAXVEX];
 <span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> &#123;</span>
     AdjList adjList;  
@@ -307,9 +310,11 @@
     <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d,%d&quot;</span>, &amp;G-&gt;numVertexes, &amp;G-&gt;numEdges);
 
     <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;输入顶点信息\n&quot;</span>);
+    getchar();
     <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; G-&gt;numVertexes; ++i) &#123;
         <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%c&quot;</span>, &amp;G-&gt;adjList[i].data);
-        G-&gt;adjList[i].firstvertex = <span class="hljs-literal">NULL</span>;   <span class="hljs-comment">// 边表置为空</span>
+        getchar();
+        G-&gt;adjList[i].firstedge = <span class="hljs-literal">NULL</span>;   <span class="hljs-comment">// 边表置为空</span>
     &#125;
     
     <span class="hljs-keyword">for</span> (k = <span class="hljs-number">0</span>; k &lt; G-&gt;numEdges; ++k) &#123;     <span class="hljs-comment">// 建立边表信息</span>
@@ -317,13 +322,13 @@
         <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d,%d&quot;</span>, &amp;i, &amp;j);
         EdgeNode *e = (EdgeNode*)<span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(EdgeNode));
         e-&gt;adjvex = j;      <span class="hljs-comment">// 邻接点在顶点表中的下标</span>
-        e-&gt;next = G-&gt;adjList[i].firstvertex;    <span class="hljs-comment">// 头插法将邻接点插入边表</span>
-        G-&gt;adjList[i].firstvertex = e;
+        e-&gt;next = G-&gt;adjList[i].firstedge;    <span class="hljs-comment">// 头插法将邻接点插入边表</span>
+        G-&gt;adjList[i].firstedge = e;
 
         e = (EdgeNode*)<span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(EdgeNode));    <span class="hljs-comment">// 无向图</span>
         e-&gt;adjvex = i;
-        e-&gt;next = G-&gt;adjList[j].firstvertex;
-        G-&gt;adjList[j].firstvertex = e;
+        e-&gt;next = G-&gt;adjList[j].firstedge;
+        G-&gt;adjList[j].firstedge = e;
     &#125;
 &#125;
 
@@ -515,7 +520,7 @@ tailvex是弧起点在顶点表的下标，headvex是弧终点在顶点表中的
                     
                       <a class="hover-with-bg" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a>
                     
-                      <a class="hover-with-bg" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91/">树</a>
+                      <a class="hover-with-bg" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%9B%BE/">图</a>
                     
                   </div>
                 
@@ -523,7 +528,7 @@ tailvex是弧起点在顶点表的下标，headvex是弧终点在顶点表中的
                   <div class="post-meta">
                     <i class="iconfont icon-tags"></i>
                     
-                      <a class="hover-with-bg" href="/tags/%E6%A0%91/">树</a>
+                      <a class="hover-with-bg" href="/tags/%E5%9B%BE/">图</a>
                     
                   </div>
                 
@@ -536,9 +541,9 @@ tailvex是弧起点在顶点表的下标，headvex是弧终点在顶点表中的
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2050/12/31/%E5%8D%9A%E5%AE%A2%E8%AF%B4%E6%98%8E/">
+                      <a href="/2020/10/19/%E5%9B%BE%E7%9A%84%E9%81%8D%E5%8E%86/">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">博客说明</span>
+                        <span class="hidden-mobile">图的遍历</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
