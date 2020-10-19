@@ -177,7 +177,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      1.5k 字
+      2.3k 字
     </span>
   
 
@@ -187,7 +187,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      20
+      31
        分钟
     </span>
   
@@ -385,6 +385,82 @@ tailvex是弧起点再顶点表的下标，headvex是弧终点在顶点表中的
     &#125;        
 &#125;
 </code></pre>
+
+<h1 id="邻接多重表（Adjacent-MultiList）"><a href="#邻接多重表（Adjacent-MultiList）" class="headerlink" title="邻接多重表（Adjacent MultiList）"></a>邻接多重表（Adjacent MultiList）</h1><p>如果在无向图的应用中，关注的重点是顶点，那么邻接表是不错的选择。但如果更关注边的操作，比如对已访问过的边做标记，删除某一条边等操作，邻接表需要找到这条边的两个边表结点进行操作，这是比较麻烦的。可以对表结点的结构进行改造，重新定义边表结构如下图所示：</p>
+<div align="center">
+<img src="/2020/10/16/%E5%9B%BE%E7%9A%84%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84/8.png" srcset="/img/loading.gif" width="50%" height="50%">   
+</div>
+其中ivex和jvex是与某条边依附的两个顶点在顶点表中的下标。ilink指向依附顶点ivex的下一条边，jlink指向依附顶点jvex的下一条边。这就是邻接多重表结构。
+
+<p>邻接多重表的例子：</p>
+<div align="center">
+<img src="/2020/10/16/%E5%9B%BE%E7%9A%84%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84/9.png" srcset="/img/loading.gif" width="50%" height="50%">   
+</div>
+
+<pre><code class="hljs C++"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdlib.h&gt;</span></span>
+
+<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> MAXVEX 100</span>
+<span class="hljs-keyword">typedef</span> <span class="hljs-keyword">char</span> VertexType;
+<span class="hljs-keyword">typedef</span> <span class="hljs-keyword">int</span> EdgeType;
+<span class="hljs-built_in">_Bool</span> Visited;
+<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Edge</span> &#123;</span>
+    <span class="hljs-comment">// Visited visited; //当需要标记是否访问时使用</span>
+    <span class="hljs-comment">// EdgeType weight; //当边需要权重时使用</span>
+    <span class="hljs-keyword">int</span> ivex, jvex;     <span class="hljs-comment">// 该边依附的两个顶点在顶点表中的下标</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Edge</span> *<span class="hljs-title">ilink</span>, *<span class="hljs-title">jlink</span>;</span>
+&#125; Edge;
+<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Vextex</span> &#123;</span>
+    VertexType data;
+    Edge *firstedge; <span class="hljs-comment">//指向第一条依附该顶点的边</span>
+&#125; Vertex, AdjMuList[MAXVEX];
+<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> &#123;</span>
+    AdjMuList adjMuList;
+    <span class="hljs-keyword">int</span> numEdges, numVertexes;
+&#125; AMLGraph;
+
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">LocateVex</span><span class="hljs-params">(AMLGraph *G, VertexType v)</span> </span>&#123;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; G-&gt;numVertex; ++i) &#123;
+        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(G-&gt;adjMuList[i].data, v) == <span class="hljs-number">0</span>)
+            <span class="hljs-keyword">return</span> i;
+    &#125;
+    <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
+&#125;
+
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">CreateAMLGraph</span><span class="hljs-params">(AMLGraph *G)</span> </span>&#123;
+    <span class="hljs-keyword">int</span> i, j, k;
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;输入顶点数和边数，用\&quot;,\&quot;分隔\n&quot;</span>);
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d,%d&quot;</span>, &amp;G-&gt;numVertexes, &amp;G-&gt;numEdges);
+
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;输入顶点信息\n&quot;</span>);
+    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; G-&gt;numVertexes; ++i) &#123;
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%c&quot;</span>, &amp;G-&gt;adjMuList[i].data);
+        G-&gt;adjMuList[i].firstedge = <span class="hljs-literal">NULL</span>;
+    &#125;
+
+    <span class="hljs-keyword">for</span> (k = <span class="hljs-number">0</span>; k &lt; G-&gt;numEdges; ++k) &#123;
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;输入边(vi,vj)，用\&quot;,\&quot;分隔：\n&quot;</span>);
+        VertexType v1, v2;
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%c,%c&quot;</span>, &amp;v1, &amp;v2);
+        i = LocateVex(G, v1);
+        j = LocateVex(G, v2);
+        <span class="hljs-keyword">if</span> (i &lt; <span class="hljs-number">0</span> || j &lt; <span class="hljs-number">0</span>) &#123;
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;找不到边或结点\n&quot;</span>);
+            <span class="hljs-built_in">exit</span>(<span class="hljs-number">-1</span>);
+        &#125;
+        Edge *e = (Edge*)<span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(Edge));
+        <span class="hljs-keyword">if</span> (!e)
+            <span class="hljs-built_in">exit</span>(<span class="hljs-number">-1</span>);
+        e-&gt;ivex = i;    <span class="hljs-comment">// 对边结点赋值</span>
+        e-&gt;jvex = j;
+        <span class="hljs-comment">// e-&gt;visited = 0;</span>
+        e-&gt;ilink = G-&gt;adjMuList[i].firstedge;   <span class="hljs-comment">// 头插法</span>
+        e-&gt;jlink = G-&gt;adjMuList[j].firstedge;
+        G-&gt;adjMuList[i].firstedge = G-&gt;adjMuList[j].firstedge = e;
+    &#125;
+&#125;</code></pre>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><strong>邻接矩阵</strong>用两个数组来表示图。一个一维数组存储图中顶点信息，一个二维数组（称为邻接矩阵）存储图中的边或弧的信息。但是边稀疏的图，邻接矩阵会浪费很多存储空间。使用<strong>邻接表</strong>解决了这一问题。但是对于有向图，邻接表求一个顶点的入度需要遍历整个表，而逆邻接表求一个顶点的出度需要遍历整个表。对于有向图使用<strong>十字链表</strong>可以解决这一问题。十字链表的顶点表中的结点有两个指针，分别指向该顶点的出边表和入边表。当一个无向图更关心边，需要增加或者删除边的时候，使用邻接表需要找到该边的两个结点进行操作。使用<strong>邻接多重表</strong>可以解决这一问题。邻接多重表的边表进行了改进，每个边结点存了该边依附的两个顶点在顶点表中的下标，而且边结点中有两个指针，分别连接与这两个顶点关联的边结点，因此可以通过这两个指针找到与一个结点关联的所有边。</p>
+
             </div>
             <hr>
             <div>
