@@ -177,7 +177,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      758 字
+      1.4k 字
     </span>
   
 
@@ -187,7 +187,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      10
+      19
        分钟
     </span>
   
@@ -254,11 +254,13 @@
     <span class="hljs-built_in">stack</span>[++top] = i;
     <span class="hljs-keyword">while</span> (top != <span class="hljs-number">-1</span>) &#123;
         <span class="hljs-keyword">int</span> k = <span class="hljs-built_in">stack</span>[top--];
-        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%c &quot;</span>, G.vexes[k]);
-        visited[k] = <span class="hljs-number">1</span>;
-        <span class="hljs-keyword">for</span> (j = <span class="hljs-number">0</span>; j &lt; G.numVertexes; ++j) &#123;
-            <span class="hljs-keyword">if</span> (G.arcs[i][j] == <span class="hljs-number">1</span> &amp;&amp; !visited[j])
-                <span class="hljs-built_in">stack</span>[++top] = j;
+        <span class="hljs-keyword">if</span> (!visited[k]) &#123;
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%c &quot;</span>, G.vexes[k]);
+            visited[k] = <span class="hljs-number">1</span>;
+            <span class="hljs-keyword">for</span> (j = <span class="hljs-number">0</span>; j &lt; G.numVertexes; ++j) &#123;
+                <span class="hljs-keyword">if</span> (G.arcs[k][j] == <span class="hljs-number">1</span> &amp;&amp; !visited[j])
+                    <span class="hljs-built_in">stack</span>[++top] = j;
+            &#125;
         &#125;
     &#125;
 &#125;
@@ -296,13 +298,15 @@
     <span class="hljs-built_in">stack</span>[++top] = i;
     <span class="hljs-keyword">while</span> (top != <span class="hljs-number">-1</span>) &#123;
         <span class="hljs-keyword">int</span> k = <span class="hljs-built_in">stack</span>[top--];
-        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%c &quot;</span>, G.adjList[k].data);
-        visited[k] = <span class="hljs-number">1</span>;
-        p = G.adjList[k].firstedge;
-        <span class="hljs-keyword">while</span> (p) &#123;
-            <span class="hljs-keyword">if</span> (!visited[p-&gt;adjvex])
-                <span class="hljs-built_in">stack</span>[++top] = p-&gt;adjvex;
-            p = p-&gt;next;
+        <span class="hljs-keyword">if</span> (!visited[k]) &#123;
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%c &quot;</span>, G.adjList[k].data);
+            visited[k] = <span class="hljs-number">1</span>;
+            p = G.adjList[k].firstedge;
+            <span class="hljs-keyword">while</span> (p) &#123;
+                <span class="hljs-keyword">if</span> (!visited[p-&gt;adjvex])
+                    <span class="hljs-built_in">stack</span>[++top] = p-&gt;adjvex;
+                p = p-&gt;next;
+            &#125;
         &#125;
     &#125;
 &#125;
@@ -314,9 +318,81 @@
     <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; G.numVertexes; ++i)
         <span class="hljs-keyword">if</span> (!visited[i])
             DFS2(G, i);
-&#125;s</code></pre>
+&#125;</code></pre>
+<p>对于n个顶点e条边的图来说，邻接矩阵遍历的时间复杂度为O(n²)，邻接表遍历的时间复杂度为O(n+e)。显然对于稀疏图来说，邻接表结构的算法在时间效率上大大提高。</p>
+<h1 id="广度优先遍历"><a href="#广度优先遍历" class="headerlink" title="广度优先遍历"></a>广度优先遍历</h1><p>广度优先搜索类似于树的层次遍历过程。它需要借助一个队列来实现。<br>只要队列不空，则重复如下操作：</p>
+<p>1.队头顶点u出队。</p>
+<p>2.依次检查u的所有邻接顶点w，若w未被访问，则访问w，并将visited[w]置为true，同时将w入队。  </p>
+<h2 id="使用邻接矩阵作为存储结构的代码-1"><a href="#使用邻接矩阵作为存储结构的代码-1" class="headerlink" title="使用邻接矩阵作为存储结构的代码"></a>使用邻接矩阵作为存储结构的代码</h2><pre><code class="hljs C++"><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> MAX 100</span>
+<span class="hljs-built_in">_Bool</span> visited[MAXVEX];
 
-<h1 id="广度优先遍历"><a href="#广度优先遍历" class="headerlink" title="广度优先遍历"></a>广度优先遍历</h1>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">BFS</span><span class="hljs-params">(MGraph G, <span class="hljs-keyword">int</span> i)</span> </span>&#123;
+    <span class="hljs-keyword">int</span> <span class="hljs-built_in">queue</span>[MAX];
+    <span class="hljs-keyword">int</span> front = <span class="hljs-number">0</span>, rear = <span class="hljs-number">0</span>;
+    <span class="hljs-built_in">queue</span>[rear] = i;
+    rear = (rear+<span class="hljs-number">1</span>) % MAX;
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%c &quot;</span>, G.vexes[i]);
+    visited[i] = <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">while</span> (rear != front) &#123;
+        <span class="hljs-keyword">int</span> j;
+        <span class="hljs-keyword">int</span> k = <span class="hljs-built_in">queue</span>[front];
+        front = (front+<span class="hljs-number">1</span>) % MAX;
+        <span class="hljs-keyword">for</span> (j = <span class="hljs-number">0</span>; j &lt; G.numVertexes; ++j)
+            <span class="hljs-keyword">if</span> (G.arcs[k][j] == <span class="hljs-number">1</span> &amp;&amp; !visited[j]) &#123;
+                <span class="hljs-built_in">queue</span>[rear] = j;
+                rear = (rear+<span class="hljs-number">1</span>) % MAX;
+                <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%c &quot;</span>, G.vexes[j]);
+                visited[j] = <span class="hljs-number">1</span>;                    
+            &#125;
+    &#125;
+&#125;
+
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">BFSTraverse</span><span class="hljs-params">(MGraph G)</span> </span>&#123;
+    <span class="hljs-keyword">int</span> i;
+    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; G.numVertexes; ++i)
+        visited[i] = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; G.numVertexes; ++i)
+        <span class="hljs-keyword">if</span> (!visited[i])
+            BFS(G, i);
+&#125;</code></pre>
+
+<h2 id="使用邻接表作为存储结构的代码-1"><a href="#使用邻接表作为存储结构的代码-1" class="headerlink" title="使用邻接表作为存储结构的代码"></a>使用邻接表作为存储结构的代码</h2><pre><code class="hljs C++"><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> MAX 100</span>
+<span class="hljs-built_in">_Bool</span> visited[MAX];     <span class="hljs-comment">//访问标记的数组</span>
+
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">BFS</span><span class="hljs-params">(AdjListGraph G, <span class="hljs-keyword">int</span> i)</span> </span>&#123;
+    <span class="hljs-keyword">int</span> <span class="hljs-built_in">queue</span>[MAX];
+    <span class="hljs-keyword">int</span> front = <span class="hljs-number">0</span>, rear = <span class="hljs-number">0</span>;
+    <span class="hljs-built_in">queue</span>[rear] = i;
+    rear = (rear+<span class="hljs-number">1</span>) % MAX;
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%c &quot;</span>, G.adjList[i].data);
+    visited[i] = <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">while</span> (front != rear) &#123;
+        <span class="hljs-keyword">int</span> k = <span class="hljs-built_in">queue</span>[front];
+        front = (front+<span class="hljs-number">1</span>) % MAX;
+        EdgeNode *p = G.adjList[k].firstedge;
+        <span class="hljs-keyword">while</span> (p) &#123;
+            <span class="hljs-keyword">if</span> (!visited[p-&gt;adjvex]) &#123;
+                <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%c &quot;</span>, G.adjList[p-&gt;adjvex].data);
+                visited[p-&gt;adjvex] = <span class="hljs-number">1</span>;
+                <span class="hljs-built_in">queue</span>[rear] = p-&gt;adjvex;
+                rear = (rear+<span class="hljs-number">1</span>) % MAX;
+            &#125;
+            p = p-&gt;next;
+        &#125;
+    &#125;
+&#125;
+
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">BFSTraverse</span><span class="hljs-params">(AdjListGraph G)</span> </span>&#123;
+    <span class="hljs-keyword">int</span> i;
+    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; G.numVertexes; ++i)
+        visited[i] = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; G.numVertexes; ++i)
+        <span class="hljs-keyword">if</span> (!visited[i])
+            BFS(G, i);
+&#125;</code></pre>
+
+<h1 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h1><p>图的深度优先遍历和广度优先遍历在时间复杂度上是一样的，不同之处仅仅在于对顶点访问的顺序不同。二者在全图遍历上没有优劣之分。<br>应视不同的情况选择不同的算法，如果图的顶点和边非常多，不能再短时间内遍历完成，遍历的目的是为了寻找合适的顶点，此时，深度优先更适合目标比较明确，以找到目标为主要目的的情况，而广度优先更适合再不断扩大遍历范围时找到相对最优解的情况。</p>
+
             </div>
             <hr>
             <div>
