@@ -17,7 +17,7 @@
   <meta name="description" content="小菜鸡的学习记录">
   <meta name="author" content="李江安">
   <meta name="keywords" content="">
-  <title>博客说明 - 李江安的博客</title>
+  <title>最小生成树 - 李江安的博客</title>
 
   <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
 
@@ -165,8 +165,8 @@
   
     <span class="post-meta">
       <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2050-12-31 00:00" pubdate>
-        2050年12月31日 凌晨
+      <time datetime="2020-10-21 10:02" pubdate>
+        2020年10月21日 上午
       </time>
     </span>
   
@@ -177,7 +177,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      14 字
+      1.1k 字
     </span>
   
 
@@ -187,7 +187,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      1
+      16
        分钟
     </span>
   
@@ -217,16 +217,163 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto" id="post">
             <!-- SEO header -->
-            <h1 style="display: none">博客说明</h1>
+            <h1 style="display: none">最小生成树</h1>
             
             <div class="markdown-body" id="post-body">
-              <p><strong>主要是更新学习笔记和一些感想。。。。</strong></p>
+              <h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>一个有 n 个结点的连通图的<strong>生成树</strong>是原图的极小连通子图，且包含原图中的所有 n 个结点，并且有保持图连通的最少的边（n-1）。<br>构造连通网的最小代价生成树称为<strong>最小生成树（Minimum Cost Spanning Tree）</strong>。<br>最小代价是指边的权值之和最小。<br>找连通图的最小生成树有两种经典算法：</p>
+<ol>
+<li>普里姆（Prim）算法</li>
+<li>克鲁斯卡尔（Kruskal）算法</li>
+</ol>
+<h1 id="普里姆（Prim）算法"><a href="#普里姆（Prim）算法" class="headerlink" title="普里姆（Prim）算法"></a>普里姆（Prim）算法</h1><p>此算法可称为“加点法”，每次迭代选择与当前点集合中的点相连的边中的代价最小者对应的点加入到当前点集，对应的边用来构造最小生成树。<br>算法从某一个顶点s开始，逐渐长大覆盖整个连通网的所有顶点。<br>步骤：</p>
+<ol>
+<li>图中所有的顶点集合为V，初始点集合U={s},W=V-U;</li>
+<li>集合U中的点与集合W中的点能组成的边中，选择一条代价最小的边(u0,w0)，加入到最小生成树中，并把w0并入到集合U中；</li>
+<li>重复上述步骤，直到最小生成树有n-1条边，即n个顶点为止。<div align="center">
+<img src="/2020/10/21/%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91/1.jpg" srcset="/img/loading.gif" width="80%" height="80%">
+</div>
+
+</li>
+</ol>
+<h2 id="邻接矩阵实现的Prim算法"><a href="#邻接矩阵实现的Prim算法" class="headerlink" title="邻接矩阵实现的Prim算法"></a>邻接矩阵实现的Prim算法</h2><p>时间复杂度 O(n²)，n为顶点数。</p>
+<pre><code class="hljs C++"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">MiniSpanTree_Prim</span><span class="hljs-params">(MGraph G, <span class="hljs-keyword">int</span> x)</span> </span>&#123;
+    <span class="hljs-keyword">int</span> min, i, j, k;
+    <span class="hljs-keyword">int</span> adjvex[MAXVEX]; <span class="hljs-comment">// 保存相关顶点下标, 与下标为i的点相连的顶点下标为adjvex[i]</span>
+    <span class="hljs-keyword">int</span> lowcost[MAXVEX];    <span class="hljs-comment">// 保存相关顶点间边的权值</span>
+    adjvex[x] = x;
+    lowcost[x] = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; G.numVertexes; ++i)
+        <span class="hljs-keyword">if</span> (i != x) &#123;
+            adjvex[i] = x;
+            lowcost[i] = G.arcs[x][i];
+        &#125;
+
+    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">1</span>; i &lt; G.numVertexes; ++i) &#123;
+        min = INFINITY;
+        <span class="hljs-keyword">for</span> (j = <span class="hljs-number">0</span>; j &lt; G.numVertexes; ++j) &#123;
+            <span class="hljs-keyword">if</span> (lowcost[j] != <span class="hljs-number">0</span> &amp;&amp; lowcost[j] &lt; min) &#123;
+                min = lowcost[j];
+                k = j;
+            &#125;
+        &#125;
+
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;(%c, %c)&quot;</span>, G.vexes[adjvex[k]], G.vexes[k]);
+        lowcost[k] = <span class="hljs-number">0</span>;
+        
+        <span class="hljs-keyword">for</span> (j = <span class="hljs-number">0</span>; j &lt; G.numVertexes; ++j) 
+            <span class="hljs-keyword">if</span> (lowcost[j] != <span class="hljs-number">0</span> &amp;&amp; G.arcs[k][j] &lt; lowcost[j]) &#123;
+                lowcost[j] = G.arcs[k][j];
+                adjvex[j] = k;
+            &#125;
+    &#125;
+&#125;</code></pre>
+<h2 id="邻接表实现的Prim算法"><a href="#邻接表实现的Prim算法" class="headerlink" title="邻接表实现的Prim算法"></a>邻接表实现的Prim算法</h2><pre><code class="hljs C++"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">MiniSpanTree_Prim</span><span class="hljs-params">(AdjListGraph G, <span class="hljs-keyword">int</span> x)</span> </span>&#123;
+    <span class="hljs-keyword">int</span> i, j, k, min;
+    <span class="hljs-keyword">int</span> adjvex[VEXMAX];
+    <span class="hljs-keyword">int</span> lowcost[VEXMAX];
+    adjvex[x] = x;
+    lowcost[x] = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; G.numVertexes; ++i)
+        <span class="hljs-keyword">if</span> (i != x) &#123;
+            adjvex[i] = x;
+            lowcost[i] = getWeight(G, x, i);
+        &#125;
+    
+    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">1</span>; i &lt; G.numVertexes; ++i) &#123;
+        min = INFINITY;
+        <span class="hljs-keyword">for</span> (j = <span class="hljs-number">0</span>; j &lt; G.numVertexes; ++j)
+            <span class="hljs-keyword">if</span> (lowcost[j] != <span class="hljs-number">0</span> &amp;&amp; lowcost[j] &lt; min) &#123;
+                min = lowcost[j];
+                k = j;
+            &#125;
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;(%c,%c)&quot;</span>, G.adjList[adjvex[k]].data, G.adjList[k].data);
+        lowcost[k] = <span class="hljs-number">0</span>;
+
+        <span class="hljs-keyword">for</span> (j = <span class="hljs-number">0</span>; j &lt; G.numVertexes; ++j) &#123;
+            <span class="hljs-keyword">int</span> temp = getWeight(G, k, j);
+            <span class="hljs-keyword">if</span> (lowcost[j] != <span class="hljs-number">0</span> &amp;&amp; temp &lt; lowcost[j]) &#123;
+                lowcost[j] = temp;
+                adjvex[j] = k;
+            &#125;
+        &#125;
+    &#125;
+&#125;</code></pre>
+
+<h1 id="克鲁斯卡尔（Kruskal）算法"><a href="#克鲁斯卡尔（Kruskal）算法" class="headerlink" title="克鲁斯卡尔（Kruskal）算法"></a>克鲁斯卡尔（Kruskal）算法</h1><p>此算法可以称为“加边法”，初始最小生成树边数为0，每迭代一次就选择一条满足条件的最小代价边，加入到最小生成树的边集合里。 </p>
+<ol>
+<li>把图中的所有边按代价从小到大排序； </li>
+<li>把图中的n个顶点看成独立的n棵树组成的森林； </li>
+<li>按权值从小到大选择边，所选的边连接的两个顶点ui,vi应属于两颗不同的树，则成为最小生成树的一条边，并将这两颗树合并作为一颗树。 </li>
+<li>重复(3),直到所有顶点都在一颗树内或者有n-1条边为止。<div align="center">
+<img src="/2020/10/21/%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91/2.jpg" srcset="/img/loading.gif" width="80%" height="80%">
+</div>
+
+</li>
+</ol>
+<h2 id="邻接矩阵转换为边集数组实现Kruskal算法"><a href="#邻接矩阵转换为边集数组实现Kruskal算法" class="headerlink" title="邻接矩阵转换为边集数组实现Kruskal算法"></a>邻接矩阵转换为边集数组实现Kruskal算法</h2><pre><code class="hljs C++"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">FindParent</span><span class="hljs-params">(<span class="hljs-keyword">int</span> parent[], <span class="hljs-keyword">int</span> f)</span> </span>&#123;
+    <span class="hljs-keyword">while</span> (parent[f])
+        f = parent[f];
+    <span class="hljs-keyword">return</span> f;
+&#125;
+
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">MiniSpanTree_Kruskal</span><span class="hljs-params">(MGraph G)</span> </span>&#123;
+    <span class="hljs-keyword">int</span> i, j, k, n, m;
+    Edge edges[MAXEDGE];
+    <span class="hljs-keyword">int</span> parent[MAXVEX];
+
+    <span class="hljs-comment">/* 将邻接矩阵转换为边集数组并按权值从小到大的顺序排列 */</span>
+    k = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; G.numVertexes; ++i)
+        <span class="hljs-keyword">for</span> (j = i+<span class="hljs-number">1</span>; j &lt; G.numVertexes; ++j)
+            <span class="hljs-keyword">if</span> (G.arcs[i][j] &gt; <span class="hljs-number">0</span> &amp;&amp; G.arcs[i][j] &lt; INFINITY) &#123;
+                edges[k].begin = i;
+                edges[k].end = j;
+                edges[k].weight = G.arcs[i][j];
+                ++k;
+            &#125;
+    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; G.numEdges<span class="hljs-number">-1</span>; ++i)
+        <span class="hljs-keyword">for</span> (j = <span class="hljs-number">0</span>; j &lt; G.numEdges-i<span class="hljs-number">-1</span>; ++j)
+            <span class="hljs-keyword">if</span> (edges[j].weight &gt; edges[j+<span class="hljs-number">1</span>].weight) &#123;
+                Edge temp = edges[j];
+                edges[j] = edges[j+<span class="hljs-number">1</span>];
+                edges[j+<span class="hljs-number">1</span>] = temp;
+            &#125;
+
+<span class="hljs-comment">/* Kruskal算法 */</span>
+    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; G.numVertexes; ++i)
+        parent[i] = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; G.numEdges; ++i) &#123;
+        m = FindParent(parent, edges[i].begin);
+        n = FindParent(parent, edges[i].end);
+        <span class="hljs-keyword">if</span> (m != n) &#123;
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;(%c,%c) %d &quot;</span>, G.vexes[edges[i].begin], G.vexes[edges[i].end], edges[i].weight);
+            parent[m] = n;
+        &#125;
+    &#125;
+&#125;</code></pre>
+<h2 id="邻接表转换为边集数组实现Kruskal算法"><a href="#邻接表转换为边集数组实现Kruskal算法" class="headerlink" title="邻接表转换为边集数组实现Kruskal算法"></a>邻接表转换为边集数组实现Kruskal算法</h2><h1 id="两种算法的比较"><a href="#两种算法的比较" class="headerlink" title="两种算法的比较"></a>两种算法的比较</h1><p>克鲁斯卡尔算法主要是针对边来展开，时间复杂度为O(eloge)，e为边数，边数少时效率会非常高；普里姆算法时间复杂度为O(n²)，对于稠密图，即边数非常多的情况会更好一些。</p>
 
             </div>
             <hr>
             <div>
               <div class="post-metas mb-3">
                 
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a>
+                    
+                      <a class="hover-with-bg" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%9B%BE/">图</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E5%9B%BE/">图</a>
+                    
+                  </div>
                 
               </div>
               
@@ -237,12 +384,18 @@
                   <article class="post-prev col-6">
                     
                     
+                      <a href="/2050/12/31/%E5%8D%9A%E5%AE%A2%E8%AF%B4%E6%98%8E/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">博客说明</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2020/10/21/%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91/">
-                        <span class="hidden-mobile">最小生成树</span>
+                      <a href="/2020/10/19/%E5%9B%BE%E7%9A%84%E9%81%8D%E5%8E%86/">
+                        <span class="hidden-mobile">图的遍历</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -455,7 +608,7 @@
     var typed = new Typed('#subtitle', {
       strings: [
         '  ',
-        "博客说明&nbsp;",
+        "最小生成树&nbsp;",
       ],
       cursorChar: "_",
       typeSpeed: 70,
